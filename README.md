@@ -1,7 +1,5 @@
-# Tauri + Yew
+# Mastauri
 
-This template should help get you started developing with Tauri and Yew.
+A [Mastodon](https://www.joinmastodon.org/) client[^1] built with [Tauri](https://tauri.studio).
 
-## Recommended IDE Setup
-
-[VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).
+[^1]: One day. Maybe.
