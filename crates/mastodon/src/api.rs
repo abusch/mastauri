@@ -30,7 +30,6 @@ impl Mastodon {
 
     pub async fn public_timeline(&self) -> Result<Vec<Status>> {
         let url = self.base.join("timelines/public")?;
-        println!("url = {url}");
         let res = self
             .client
             .get(url)

@@ -1,4 +1,4 @@
-use mastodon_model::{Account, Status};
+use mastodon_model::Status;
 use yew::prelude::*;
 
 #[derive(Clone, Properties, PartialEq, Eq)]
@@ -33,23 +33,28 @@ pub struct TootProps {
 pub fn toot(TootProps { toot }: &TootProps) -> Html {
     html! {
         <div class="toot">
-            <TootHeader account={toot.account.clone()} />
-            <TootContent content={toot.content.clone()} />
+            <TootHeader
+                account_display_name={toot.resolved_account_display_name()}
+                account_acct={toot.account.acct.clone()}
+                avatar_url={toot.account.avatar.to_string()}
+            />
+            <SanitizedHtml content={toot.resolved_content()} class_name = "toot-content"/>
         </div>
     }
 }
 
 #[derive(Clone, Properties, PartialEq, Eq)]
-pub struct TootContentProps {
+pub struct SanitizedHtmlProps {
     content: String,
+    class_name: String,
 }
 
-pub struct TootContent;
+pub struct SanitizedHtml;
 
-impl Component for TootContent {
+impl Component for SanitizedHtml {
     type Message = ();
 
-    type Properties = TootContentProps;
+    type Properties = SanitizedHtmlProps;
 
     fn create(_ctx: &Context<Self>) -> Self {
         Self
@@ -58,24 +63,35 @@ impl Component for TootContent {
     fn view(&self, ctx: &Context<Self>) -> Html {
         let div = gloo_utils::document().create_element("div").unwrap();
         div.set_inner_html(&ctx.props().content);
-        div.set_class_name("toot-content");
+        div.set_class_name(&ctx.props().class_name);
         Html::VRef(div.into())
     }
 }
 
 #[derive(Clone, Properties, PartialEq, Eq)]
 pub struct TootHeaderProps {
-    account: Account,
+    account_display_name: String,
+    account_acct: String,
+    avatar_url: String,
 }
 
 #[function_component(TootHeader)]
-pub fn toot_header(TootHeaderProps { account }: &TootHeaderProps) -> Html {
+pub fn toot_header(
+    TootHeaderProps {
+        account_display_name,
+        account_acct,
+        avatar_url,
+    }: &TootHeaderProps,
+) -> Html {
     html! {
         <div class="toot-header">
-            <img class="avatar" width={48} height={48} src={account.avatar.to_string()} />
+            <img class="avatar" width={48} height={48} src={avatar_url.clone()} />
             <div class="account-info">
-                <p class="display-name">{&account.display_name}</p>
-                <p class="username">{&account.acct}</p>
+                <SanitizedHtml
+                    content={account_display_name.clone()}
+                    class_name="display-name"
+                />
+                <p class="username">{&account_acct}</p>
             </div>
         </div>
     }

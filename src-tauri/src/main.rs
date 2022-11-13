@@ -8,17 +8,9 @@ use mastodon::Status;
 use tauri::State;
 use url::Url;
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
 #[tauri::command]
 async fn fetch_public_timeline(masto: State<'_, Mastodon>) -> Result<Vec<Status>, String> {
-    println!("Fetching toots...");
     masto.public_timeline().await.map_err(|e| {
-        eprintln!("Failed to fetch toots: {e}");
         e.to_string()
     })
 }
@@ -28,7 +20,7 @@ fn main() {
         .expect("Failed to instantiate Mastodon client");
     tauri::Builder::default()
         .manage(masto)
-        .invoke_handler(tauri::generate_handler![greet, fetch_public_timeline])
+        .invoke_handler(tauri::generate_handler![fetch_public_timeline])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

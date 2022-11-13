@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use url::Url;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -150,4 +150,26 @@ pub struct Status {
     pub card: Option<Card>,
     pub language: Option<String>,
     pub text: Option<String>,
+}
+
+impl Status {
+    pub fn resolved_content(&self) -> String {
+        self.resolve_emojis(self.content.clone())
+    }
+
+    /// Return the display name with the emojis resolved
+    pub fn resolved_account_display_name(&self) -> String {
+        self.resolve_emojis(self.account.display_name.clone())
+    }
+
+    fn resolve_emojis(&self, s: String) -> String {
+        let mut content = s;
+        for emoji in &self.emojis {
+            let pattern = format!(":{}:", emoji.shortcode);
+            let replacement = format!("<img src=\"{}\" />", emoji.url);
+            content = content.replace(&pattern, &replacement);
+        }
+
+        content
+    }
 }
